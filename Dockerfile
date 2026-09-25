@@ -13,4 +13,4 @@ COPY src ./src
 
 RUN mkdir -p /app/data
 
-CMD ["python", "-m", "src.main"]
+CMD ["sh", "-c", "python -m src.configurar_equipes && python -m src.main"]
