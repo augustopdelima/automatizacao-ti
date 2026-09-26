@@ -1,6 +1,7 @@
 """Testes das regras de negócio do domínio (entities)."""
 
 from src.domain.entities import Chamado, Equipe
+from src.domain.value_objects import AnaliseSolicitacao
 
 
 def test_equipe_ativa_com_grupo_pode_receber():
@@ -64,3 +65,27 @@ def test_motivo_equipe_nao_cadastrada():
         equipe=None,
     )
     assert chamado.motivo_sem_encaminhamento() == "equipe 'RH' não cadastrada no banco"
+
+
+def test_analise_solicitacao_normaliza_chaves_e_valores():
+    # Chaves capitalizadas, acentos/caixa livres e valores descritivos da IA
+    # são normalizados antes da validação.
+    analise = AnaliseSolicitacao.model_validate_json(
+        '{"Categoria": "Hardware / Falha de Equipamento", '
+        '"Prioridade": "Média", "Resumo": "  não liga  ", '
+        '"Equipe": "suporte técnico"}'
+    )
+    assert analise.categoria == "HARDWARE"
+    assert analise.prioridade == "MEDIA"
+    assert analise.resumo == "não liga"
+    assert analise.equipe == "SUPORTE TECNICO"
+
+
+def test_analise_solicitacao_aceita_json_no_padrao():
+    analise = AnaliseSolicitacao.model_validate_json(
+        '{"categoria": "REDE", "prioridade": "CRITICA", '
+        '"resumo": "Internet caiu", "equipe": "INFRAESTRUTURA"}'
+    )
+    assert analise.categoria == "REDE"
+    assert analise.prioridade == "CRITICA"
+    assert analise.equipe == "INFRAESTRUTURA"

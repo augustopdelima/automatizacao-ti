@@ -10,7 +10,7 @@ import logging
 from pydantic import ValidationError
 
 from ...domain.entities import Chamado
-from ...domain.value_objects import AnaliseSolicitacao
+from ...domain.value_objects import AnaliseSolicitacao, normalizar_equipe
 from ..ports.ai_provider import AIProvider, AIProviderError
 from ..ports.repository import AutomationRepository
 
@@ -26,6 +26,36 @@ DESCRICOES_EQUIPES = {
 
 # Equipe usada quando a classificação falha (fallback).
 EQUIPE_PADRAO = "SUPORTE"
+
+
+def _resolver_equipe(sugerida: str, equipes: list[str]) -> str:
+    """Casa o nome de equipe sugerido pela IA com uma equipe cadastrada.
+
+    A IA pode escrever o nome de forma livre (ex.: 'Suporte Técnico de
+    Hardware' → SUPORTE). Primeiro tenta correspondência exata; depois, o
+    nome da equipe que aparecer primeiro dentro da sugestão. Sem
+    correspondência, devolve a sugestão original (o fluxo existente trata
+    equipe desconhecida como sem encaminhamento).
+    """
+    alvo = normalizar_equipe(sugerida)
+
+    candidatas: list[tuple[int, str]] = []
+    for nome in equipes:
+        nome_normalizado = normalizar_equipe(nome)
+        if nome_normalizado == alvo:
+            return nome
+        posicao = alvo.find(nome_normalizado)
+        if posicao >= 0:
+            candidatas.append((posicao, nome))
+
+    if candidatas:
+        # Menor posição; desempate pelo nome de equipe mais curto.
+        return min(
+            candidatas,
+            key=lambda item: (item[0], len(normalizar_equipe(item[1]))),
+        )[1]
+
+    return sugerida
 
 
 def _montar_bloco_equipes(equipes: list[str]) -> str:
@@ -63,6 +93,13 @@ equipes cadastradas abaixo (não invente nomes de equipes):
 
 Crie também um resumo curto e objetivo.
 
+Responda APENAS com um JSON válido, sem texto adicional, com exatamente estas
+chaves em minúsculas: categoria, prioridade, resumo, equipe.
+Valores exatos:
+- categoria: SISTEMA, HARDWARE, REDE ou ACESSO.
+- prioridade: BAIXA, MEDIA, ALTA ou CRITICA.
+- equipe: apenas uma das equipes listadas acima, pelo nome exato.
+
 Solicitação do usuário:
 {mensagem}
 """
@@ -91,7 +128,8 @@ class ProcessarSolicitacaoUseCase:
         analise = self._classificar(mensagem, equipes)
 
         if analise is not None:
-            equipe = self._repository.buscar_equipe_por_nome(analise.equipe)
+            nome_equipe = _resolver_equipe(analise.equipe, equipes)
+            equipe = self._repository.buscar_equipe_por_nome(nome_equipe)
         else:
             # Classificação falhou: atribui o chamado à equipe SUPORTE por
             # padrão, quando ela existir no banco (criada no primeiro start).

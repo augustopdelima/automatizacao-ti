@@ -13,7 +13,7 @@ def _provider(handler):
     client = httpx.Client(transport=httpx.MockTransport(handler))
     return OllamaAIProvider(
         base_url="http://ollama:11434",
-        model="qwen3.5:4b",
+        model="gemma4:12b",
         client=client,
     )
 
@@ -22,7 +22,7 @@ def test_generate_sucesso():
     def handler(request):
         assert request.url.path == "/api/generate"
         payload = json.loads(request.content)
-        assert payload["model"] == "qwen3.5:4b"
+        assert payload["model"] == "gemma4:12b"
         assert payload["stream"] is False
         assert payload["format"] == "json"
         return httpx.Response(

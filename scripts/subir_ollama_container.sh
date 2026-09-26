@@ -5,8 +5,8 @@
 # Nenhuma porta é publicada no host.
 #
 # Uso:
-#   bash scripts/subir_ollama_container.sh                       # modelo padrão qwen3.5:4b
-#   bash scripts/subir_ollama_container.sh qwen3.5:4b            # modelo específico
+#   bash scripts/subir_ollama_container.sh                       # modelo padrão gemma4:12b
+#   bash scripts/subir_ollama_container.sh gemma4:12b            # modelo específico
 #   REUTILIZAR_MODELOS_HOST=1 bash scripts/subir_ollama_container.sh  # reaproveita ~/.ollama do host
 #   GPU=1 bash scripts/subir_ollama_container.sh                 # expõe a GPU NVIDIA ao container
 #
@@ -22,7 +22,7 @@ set -euo pipefail
 REDE="botnet"
 CONTAINER_OLLAMA="ollama"
 VOLUME_MODELOS="${VOLUME_MODELOS:-ollama}"
-MODELO="${1:-${OLLAMA_MODEL:-qwen3.5:4b}}"
+MODELO="${1:-${OLLAMA_MODEL:-gemma4:12b}}"
 
 if ! command -v podman >/dev/null 2>&1; then
     echo "Erro: 'podman' não encontrado no PATH." >&2

@@ -163,7 +163,7 @@ O padrão é `gemini` (para não quebrar configurações existentes). A troca de
 # .env
 AI_PROVIDER=ollama
 OLLAMA_BASE_URL=http://localhost:11434
-OLLAMA_MODEL=qwen3.5:4b
+OLLAMA_MODEL=gemma4:12b
 ```
 
 Se a aplicação roda em container e o Ollama roda no host, use `host.containers.internal` (Podman) ou o IP da máquina:
@@ -172,7 +172,7 @@ Se a aplicação roda em container e o Ollama roda no host, use `host.containers
 OLLAMA_BASE_URL=http://host.containers.internal:11434
 ```
 
-O modelo indicado em `OLLAMA_MODEL` precisa estar baixado no Ollama (`ollama pull qwen3.5:4b`).
+O modelo indicado em `OLLAMA_MODEL` precisa estar baixado no Ollama (`ollama pull gemma4:12b`).
 
 #### Ollama em container (mesma rede do bot)
 
@@ -181,8 +181,8 @@ Alternativa que **não exige expor o Ollama do host** (`0.0.0.0`): o Ollama roda
 Existe um script que automatiza a criação da rede, do container e o download do modelo:
 
 ```bash
-bash scripts/subir_ollama_container.sh                                # modelo padrão qwen3.5:4b
-bash scripts/subir_ollama_container.sh qwen3.5:4b                     # modelo específico
+bash scripts/subir_ollama_container.sh                                # modelo padrão gemma4:12b
+bash scripts/subir_ollama_container.sh gemma4:12b                     # modelo específico
 REUTILIZAR_MODELOS_HOST=1 bash scripts/subir_ollama_container.sh      # reaproveita ~/.ollama do host
 GPU=1 bash scripts/subir_ollama_container.sh                          # expõe a GPU NVIDIA ao container
 ```
@@ -206,7 +206,7 @@ podman run -d \
   ollama/ollama
 
 # 3. Modelo (ajuste o nome conforme o OLLAMA_MODEL do .env)
-podman exec -it ollama ollama pull qwen3.5:4b
+podman exec -it ollama ollama pull gemma4:12b
 ```
 
 No `.env`:
