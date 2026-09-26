@@ -1,0 +1,1 @@
+"""Adapters: implementações concretas das portas (entrada e saída)."""

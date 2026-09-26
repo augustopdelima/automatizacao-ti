@@ -1,0 +1,1 @@
+"""Adapters de saída: implementações concretas das portas."""

@@ -1,7 +1,11 @@
 # A versão 22.5 do python-telegram-bot tem um bug no startup (`run_polling`
 # acessa bot.id antes do ExtBot ser inicializado). Mantemos a faixa 22.x e o
-# código de src/main.py contorna o bug com initialize() explícito.
+# código de src/adapters/inbound/telegram/bot.py contorna o bug com
+# initialize() explícito.
 python-telegram-bot>=22.5,<23
 python-dotenv
 google-genai
 pydantic
+# httpx é usado diretamente pelo adapter do Ollama (a lib do Telegram também
+# o usa, mas declaramos porque importamos o módulo diretamente).
+httpx

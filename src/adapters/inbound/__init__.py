@@ -1,0 +1,1 @@
+"""Adapters de entrada: como o mundo externo chama a aplicação."""

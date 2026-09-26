@@ -1,16 +1,32 @@
-"""Textos das mensagens enviadas pelo bot no Telegram."""
+"""Textos das mensagens enviadas pelo bot no Telegram (apresentação).
 
-from .service import Chamado
+Este módulo pertence ao adapter de entrada: formata os dados de domínio
+(Chamado/Equipe) em texto. Nenhuma regra de negócio vive aqui.
+"""
+
+from ....domain.entities import Chamado
+
+
+def processing() -> str:
+    """Aviso imediato de que a solicitação foi recebida (antes da análise).
+
+    Enviada pelo adapter assim que a mensagem é qualificada como solicitação
+    de suporte, antes do processamento demorado (chamada de IA/persistência).
+    """
+    return (
+        "🛠️ Recebi sua solicitação de suporte. "
+        "Vou analisar o problema e já retorno com uma resposta."
+    )
 
 
 def confirmacao(chamado: Chamado, nome_equipe: str, encaminhado: bool) -> str:
     texto = (
         "✅ Solicitação registrada!\n\n"
         f"📋 Protocolo: #{chamado.id}\n"
-        f"🏷️ Categoria: {chamado.analise.categoria}\n"
-        f"🚨 Prioridade: {chamado.analise.prioridade}\n"
+        f"🏷️ Categoria: {chamado.categoria}\n"
+        f"🚨 Prioridade: {chamado.prioridade}\n"
         f"👥 Equipe responsável: {nome_equipe}\n\n"
-        f"📝 Resumo:\n{chamado.analise.resumo}\n"
+        f"📝 Resumo:\n{chamado.resumo}\n"
     )
 
     if encaminhado:
@@ -27,11 +43,11 @@ def novo_chamado(chamado: Chamado, nome_solicitante: str, nome_equipe: str) -> s
         "🔔 NOVO CHAMADO\n\n"
         f"📋 Protocolo: #{chamado.id}\n\n"
         f"👤 Solicitante: {nome_solicitante}\n"
-        f"🏷️ Categoria: {chamado.analise.categoria}\n"
-        f"🚨 Prioridade: {chamado.analise.prioridade}\n"
+        f"🏷️ Categoria: {chamado.categoria}\n"
+        f"🚨 Prioridade: {chamado.prioridade}\n"
         f"👥 Equipe: {nome_equipe}\n\n"
         f"📝 Solicitação:\n{chamado.mensagem}\n\n"
-        f"📝 Resumo:\n{chamado.analise.resumo}\n\n"
+        f"📝 Resumo:\n{chamado.resumo}\n\n"
         "⏱️ Status: ABERTA"
     )
 
@@ -82,22 +98,22 @@ def sem_classificacao_suporte(
     )
 
 
-def consulta(solicitacao) -> str:
+def consulta(chamado: Chamado) -> str:
     linhas = [
-        f"Solicitação #{solicitacao['id']}",
+        f"Solicitação #{chamado.id}",
         "",
-        f"Mensagem: {solicitacao['mensagem']}",
-        f"Status: {solicitacao['status']}",
-        f"Criada em: {solicitacao['criado_em']}",
+        f"Mensagem: {chamado.mensagem}",
+        f"Status: {chamado.status}",
+        f"Criada em: {chamado.criado_em or '—'}",
     ]
 
-    if solicitacao["categoria"]:
-        linhas.append(f"Categoria: {solicitacao['categoria']}")
-    if solicitacao["prioridade"]:
-        linhas.append(f"Prioridade: {solicitacao['prioridade']}")
-    if solicitacao["resumo"]:
-        linhas.append(f"Resumo: {solicitacao['resumo']}")
-    if solicitacao["equipe_nome"]:
-        linhas.append(f"Equipe: {solicitacao['equipe_nome']}")
+    if chamado.categoria:
+        linhas.append(f"Categoria: {chamado.categoria}")
+    if chamado.prioridade:
+        linhas.append(f"Prioridade: {chamado.prioridade}")
+    if chamado.resumo:
+        linhas.append(f"Resumo: {chamado.resumo}")
+    if chamado.equipe is not None:
+        linhas.append(f"Equipe: {chamado.equipe.nome}")
 
     return "\n".join(linhas)

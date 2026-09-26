@@ -1,0 +1,1 @@
+"""Pacote de configuração e composição da aplicação."""

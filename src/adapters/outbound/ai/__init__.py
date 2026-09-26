@@ -1,0 +1,1 @@
+"""Adapters de provedores de IA (saída)."""

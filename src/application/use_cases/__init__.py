@@ -1,0 +1,1 @@
+"""Casos de uso (orquestração das regras de negócio do domínio)."""

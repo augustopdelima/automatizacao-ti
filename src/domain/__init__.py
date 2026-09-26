@@ -1,0 +1,1 @@
+"""Domínio: regras e conceitos da aplicação, sem dependência de tecnologia."""

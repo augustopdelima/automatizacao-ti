@@ -1,0 +1,1 @@
+"""Portas (interfaces) que a aplicação usa para conversar com o mundo externo."""

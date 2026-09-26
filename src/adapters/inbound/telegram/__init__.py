@@ -1,0 +1,1 @@
+"""Adapter de entrada do Telegram (handlers e textos de resposta)."""

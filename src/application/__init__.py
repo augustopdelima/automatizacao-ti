@@ -1,0 +1,1 @@
+"""Camada de aplicação: portas e casos de uso. Não conhece tecnologia."""
