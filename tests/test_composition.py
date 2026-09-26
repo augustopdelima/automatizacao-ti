@@ -18,7 +18,7 @@ def test_seleciona_ollama():
         {
             "AI_PROVIDER": "ollama",
             "OLLAMA_BASE_URL": "http://ollama:11434",
-            "OLLAMA_MODEL": "qwen3.5:4b",
+            "OLLAMA_MODEL": "gemma4:12b",
         }
     )
     provider = criar_provider_ia(settings)

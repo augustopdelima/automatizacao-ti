@@ -45,6 +45,28 @@ def test_classifica_e_persiste(repo):
     assert "INFRAESTRUTURA" in provider.ultimo_prompt
 
 
+def test_resposta_fora_do_padrao_e_normalizada(repo):
+    # Chaves capitalizadas, valores com acento/caixa livre e nome de equipe
+    # descritivo são normalizados antes da validação e do roteamento.
+    provider = FakeAIProvider(
+        resposta=(
+            '{"Categoria": "Rede", "Prioridade": "Média", '
+            '"Resumo": "  internet caiu  ", '
+            '"Equipe": "Suporte Técnico de Hardware"}'
+        )
+    )
+    caso_de_uso = ProcessarSolicitacaoUseCase(provider, repo)
+
+    chamado = caso_de_uso.executar("internet caiu", 1, "@ana")
+
+    assert chamado.classificado
+    assert chamado.categoria == "REDE"
+    assert chamado.prioridade == "MEDIA"
+    assert chamado.resumo == "internet caiu"
+    assert chamado.equipe is not None
+    assert chamado.equipe.nome == "SUPORTE"
+
+
 def test_equipe_inexistente_no_banco(repo):
     provider = FakeAIProvider(
         resposta=(

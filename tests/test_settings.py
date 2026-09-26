@@ -22,12 +22,12 @@ def test_provider_ollama():
         {
             "AI_PROVIDER": "ollama",
             "OLLAMA_BASE_URL": "http://host.containers.internal:11434",
-            "OLLAMA_MODEL": "qwen3.5:4b",
+            "OLLAMA_MODEL": "gemma4:12b",
         }
     )
     assert settings.ai_provider == "ollama"
     assert settings.ollama_base_url == "http://host.containers.internal:11434"
-    assert settings.ollama_model == "qwen3.5:4b"
+    assert settings.ollama_model == "gemma4:12b"
 
 
 def test_provider_ignora_maiusculas_e_espacos():
