@@ -1,0 +1,1 @@
+"""Automação de chamados de suporte de TI (Arquitetura Hexagonal)."""

@@ -1,0 +1,1 @@
+"""Persistência SQLite: schema, migração e conexão (infraestrutura pura)."""
