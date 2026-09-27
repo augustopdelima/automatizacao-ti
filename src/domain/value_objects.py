@@ -17,11 +17,13 @@ SINONIMOS_CATEGORIA = {
     "ACESSO": ("ACESSO", "LOGIN", "SENHA", "PERMISSAO", "CREDENCIAL"),
 }
 
+# Ordem do dict = precedência: quando várias categorias casam, vence a mais
+# severa ("URGENTE CRITICO" → CRITICA; "IMEDIATA" → ALTA, não MEDIA).
 SINONIMOS_PRIORIDADE = {
-    "BAIXA": ("BAIXA", "BAIXO", "LOW"),
-    "MEDIA": ("MEDIA", "MEDIO", "MODERAD"),
-    "ALTA": ("ALTA", "ALTO", "HIGH", "URGENT"),
     "CRITICA": ("CRITICA", "CRITICO", "EMERGENC", "FORA DO AR", "INDISPONIVEL"),
+    "ALTA": ("ALTA", "ALTO", "HIGH", "URGENT", "URGENC", "IMEDIAT"),
+    "MEDIA": ("MEDIA", "MEDIO", "MODERAD"),
+    "BAIXA": ("BAIXA", "BAIXO", "LOW"),
 }
 
 
