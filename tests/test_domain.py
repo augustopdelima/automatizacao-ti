@@ -89,3 +89,22 @@ def test_analise_solicitacao_aceita_json_no_padrao():
     assert analise.categoria == "REDE"
     assert analise.prioridade == "CRITICA"
     assert analise.equipe == "INFRAESTRUTURA"
+
+
+def test_analise_solicitacao_mapeia_urgencia_e_imediata_para_alta():
+    # Regressão: "urgência" não era capturada e "imediata" caía em MEDIA.
+    for prioridade in ("Urgência", "Imediata"):
+        analise = AnaliseSolicitacao.model_validate_json(
+            f'{{"categoria": "SISTEMA", "prioridade": "{prioridade}", '
+            '"resumo": "x", "equipe": "SUPORTE"}'
+        )
+        assert analise.prioridade == "ALTA"
+
+
+def test_analise_solicitacao_precedencia_mais_severa_vence():
+    # "Urgente crítico": CRITICA vence (era ALTA por causa da ordem).
+    analise = AnaliseSolicitacao.model_validate_json(
+        '{"categoria": "SISTEMA", "prioridade": "Urgente crítico", '
+        '"resumo": "x", "equipe": "SUPORTE"}'
+    )
+    assert analise.prioridade == "CRITICA"
